@@ -18,3 +18,5 @@ export * from "./churn/index.js";
 export * from "./cochange/index.js";
 export * from "./hotspots/index.js";
 export * from "./risk/index.js";
+export * from "./adapters/index.js";
+export { ANALYSIS_SCHEMA_VERSION, analyze, type AnalysisOutput } from "./analyze.js";
