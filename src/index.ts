@@ -14,3 +14,7 @@
 //   - Same input → same output, bit-for-bit, across runs.
 
 export * from "./commit-mining/index.js";
+export * from "./churn/index.js";
+export * from "./cochange/index.js";
+export * from "./hotspots/index.js";
+export * from "./risk/index.js";
