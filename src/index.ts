@@ -13,4 +13,4 @@
 //   - No Date.now(), no Math.random(), no unordered iteration in business logic.
 //   - Same input → same output, bit-for-bit, across runs.
 
-export {};
+export * from "./commit-mining/index.js";
