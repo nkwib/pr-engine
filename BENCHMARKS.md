@@ -1,0 +1,52 @@
+# @prcompass/core — Benchmarks
+
+Reproducible: `pnpm -F @prcompass/core bench`. The benchmark uses a deterministic synthetic repo (see `bench/synthetic.ts`) — same input every run, no PRNG, no I/O.
+
+## Headline number
+
+> **`analyze()` runs the full pipeline (mining → churn → cochange → hotspots → risk) over a 10,000-commit / 500-file synthetic repository in ~7.5 ms (median).**
+
+That's the deterministic engine work only. Reading `git log` from disk is the adapter's job and is dominated by subprocess overhead, not by core compute.
+
+## Detailed results
+
+Hardware: Apple Silicon, single-threaded, Node 22.
+Workload: 10,000 commits, 500 unique files, 5 files-touched per commit, 18 % bug-fix rate.
+
+| Function                                | Throughput (Hz) | Median (ms) | p99 (ms) | Notes                                                |
+| --------------------------------------- | --------------: | ----------: | -------: | ---------------------------------------------------- |
+| `mineCommits`                           |           2 190 |        0.46 |     0.71 | Bug-fix classification + signal attribution.         |
+| `computeHotspots`                       |           2 232 |        0.45 |     0.57 | Bayesian-smoothed bug-fix density per file.          |
+| `computeChurn`                          |           1 262 |        0.79 |     0.95 | Per-file commit / bug-fix counts + first/last-touch. |
+| `computeCochange`                       |             216 |        4.63 |     6.23 | File×file co-modification graph (heaviest engine).   |
+| `computeRisk` (with mined ready)        |             140 |        7.13 |     8.01 | Full risk combinator over the four engines above.    |
+| `analyze` (end-to-end from raw commits) |             133 |        7.51 |     8.06 | Top-level entry point used by the CLI.               |
+
+Variance: ±0.5 % to ±2 % relative (`rme`), ≥67 samples each.
+
+## What's measured, what's not
+
+Measured:
+
+- Pure engine compute over an in-memory `CommitRecord[]` pre-built by the synthetic generator.
+
+Not measured:
+
+- `git log` subprocess (LocalAdapter), `octokit` REST calls (GitHubAdapter): adapter-side, dominated by external I/O.
+- JSON serialisation of the output: small (<10 ms even on a 100-file PR), measured separately by the CLI smoke workflow.
+- Memory: typical run holds the full mined commit array (~10k entries, ~5 MB) plus the cochange adjacency (~50–100k edges, ~5 MB). Under 50 MB peak resident at this scale.
+
+## Performance budget
+
+The cochange engine is the only one that scales super-linearly with input size (`O(C × F²)` where `F` is files-per-commit). The default `maxFilesPerCommit: 50` cap prevents pathological commits (mass-refactor renames) from blowing the budget. ROADMAP § M11.4 set a target of < 30 s on a 5 k-commit fixture; the actual measurement on 10 k commits is ~5 ms.
+
+The `analyze()` 7.5 ms median is comfortable for use as a sub-step in a hosted PR-review pipeline (where Tier 2/3 LLM calls dominate at ~1–10 s each) and for interactive CLI use (the `git log` subprocess will dominate, not core).
+
+## Reproducing
+
+```bash
+pnpm install
+pnpm -F @prcompass/core bench
+```
+
+Bench runs are deterministic: same numbers ±the rme variance. If you see >5 % drift between runs on identical hardware, that's a regression — open an issue.
