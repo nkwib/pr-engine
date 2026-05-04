@@ -1,0 +1,150 @@
+/* Design tokens — light is default; dark applied via [data-theme="dark"] on <html>. */
+/* core palette: cyan/teal accent — instrument / engine / scientific. */
+:root {
+  /* Type scale (modular, 1.2 ratio) */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.35rem;
+  --fs-xl: 1.65rem;
+  --fs-2xl: 2.1rem;
+  --fs-3xl: 2.75rem;
+  --fs-4xl: 3.5rem;
+
+  /* Spacing */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-9: 6rem;
+
+  /* Radii */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-xl: 16px;
+
+  /* Layout */
+  --content-max: 46rem;
+  --wide-max: 76rem;
+  --sidebar-w: 16rem;
+  --header-h: 56px;
+
+  /* Fonts */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+    Consolas, 'Liberation Mono', monospace;
+
+  /* Light theme palette — cyan/teal accent on slate */
+  --c-bg: #f8fafc;
+  --c-bg-alt: #f1f5f9;
+  --c-surface: #ffffff;
+  --c-surface-2: #f1f5f9;
+  --c-text: #0f172a;
+  --c-text-muted: #475569;
+  --c-text-subtle: #64748b;
+  --c-border: #e2e8f0;
+  --c-border-strong: #cbd5e1;
+  --c-accent: #0e7490;
+  --c-accent-soft: #ecfeff;
+  --c-accent-fg: #ffffff;
+  --c-good: #15803d;
+  --c-good-soft: #f0fdf4;
+
+  /* Code tokens */
+  --c-code-bg: #f1f5f9;
+  --c-code-text: #0f172a;
+  --c-code-comment: #64748b;
+  --c-code-keyword: #0e7490;
+  --c-code-string: #0f766e;
+  --c-code-fn: #1d4ed8;
+  --c-code-num: #c2410c;
+  --c-code-punct: #475569;
+  --c-code-prop: #6b21a8;
+  --c-code-tag: #b45309;
+  --c-code-deleted: #b91c1c;
+  --c-code-inserted: #15803d;
+
+  /* Shadows — slate-tinted */
+  --sh-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --sh-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 1px 2px rgba(15, 23, 42, 0.05);
+  --sh-lg: 0 12px 32px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(15, 23, 42, 0.06);
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --c-bg: #020617;
+  --c-bg-alt: #0f172a;
+  --c-surface: #0f172a;
+  --c-surface-2: #1e293b;
+  --c-text: #e2e8f0;
+  --c-text-muted: #94a3b8;
+  --c-text-subtle: #64748b;
+  --c-border: #1e293b;
+  --c-border-strong: #334155;
+  --c-accent: #22d3ee;
+  --c-accent-soft: #082a30;
+  --c-accent-fg: #020617;
+  --c-good: #4ade80;
+  --c-good-soft: #0e1f17;
+
+  --c-code-bg: #0f172a;
+  --c-code-text: #e2e8f0;
+  --c-code-comment: #64748b;
+  --c-code-keyword: #22d3ee;
+  --c-code-string: #5eead4;
+  --c-code-fn: #93c5fd;
+  --c-code-num: #fdba74;
+  --c-code-punct: #94a3b8;
+  --c-code-prop: #d8b4fe;
+  --c-code-tag: #fcd34d;
+  --c-code-deleted: #fca5a5;
+  --c-code-inserted: #86efac;
+
+  --sh-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --sh-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --sh-lg: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --c-bg: #020617;
+    --c-bg-alt: #0f172a;
+    --c-surface: #0f172a;
+    --c-surface-2: #1e293b;
+    --c-text: #e2e8f0;
+    --c-text-muted: #94a3b8;
+    --c-text-subtle: #64748b;
+    --c-border: #1e293b;
+    --c-border-strong: #334155;
+    --c-accent: #22d3ee;
+    --c-accent-soft: #082a30;
+    --c-accent-fg: #020617;
+    --c-good: #4ade80;
+    --c-good-soft: #0e1f17;
+
+    --c-code-bg: #0f172a;
+    --c-code-text: #e2e8f0;
+    --c-code-comment: #64748b;
+    --c-code-keyword: #22d3ee;
+    --c-code-string: #5eead4;
+    --c-code-fn: #93c5fd;
+    --c-code-num: #fdba74;
+    --c-code-punct: #94a3b8;
+    --c-code-prop: #d8b4fe;
+    --c-code-tag: #fcd34d;
+    --c-code-deleted: #fca5a5;
+    --c-code-inserted: #86efac;
+
+    color-scheme: dark;
+  }
+}

@@ -1,0 +1,79 @@
+---
+title: '@prcompass/core · Invariants'
+---
+
+<svelte:head>
+  <title>@prcompass/core · Invariants</title>
+  <meta
+    name="description"
+    content="The seven non-negotiable invariants that keep the @prcompass/core engine deterministic, grounded, and side-effect-free."
+  />
+</svelte:head>
+
+# Invariants
+
+These rules are non-negotiable. ESLint enforces import-side at the workspace root; the `package-invariants.test.ts` enforces package-side; the rest are upheld by code review and the determinism / no-fabrication tests.
+
+> A "no fabrication" engine isn't a feature — it's an architectural commitment. Every rule below pays for that commitment.
+
+## 1. No network I/O
+
+No `fetch`, no `octokit`, no `node:http`. **Inputs come in as data; outputs go out as data.**
+
+Why: a deterministic engine that talks to the network is not deterministic. Even with caches, the network introduces clock-skew failures, rate-limit surprises, and a maintenance surface that has nothing to do with the metrics being computed. The adapters layer ([`@prcompass/cli`](https://github.com/nkwib/prcompass-cli)) carries that burden so the engine doesn't have to.
+
+## 2. No LLM clients
+
+No `@anthropic-ai/sdk`, no `openai`, no `@prcompass/llm-client`. **Every claim is derived from real commit history, not generated.**
+
+Why: this is the OSS deterministic floor that everyone can verify. LLM enrichment lives in the closed-source hosted product; the engine ships only the metrics that fall out of arithmetic on commit metadata.
+
+## 3. No DB clients
+
+No `@supabase/*`, no `@prcompass/db`. **The package neither reads nor writes persistent storage.**
+
+Why: a database introduces a stateful surface that breaks determinism (different rows = different output) and forces every consumer to provision infrastructure they may not need. The engine accepts data, returns data.
+
+## 4. No environment variables
+
+Configuration is passed as **function arguments**. There is no `process.env.*` in business logic.
+
+Why: env-var-driven behaviour is invisible at the call site, fights snapshot tests, and leaks runtime concerns into pure functions. The engine takes parameters; the call site decides where they come from.
+
+## 5. No subprocesses
+
+No `child_process`, no `spawn`. **Reading the git history is the caller's job** (see "Producing CommitRecord[]" in the [guide](/docs#producing-input)).
+
+Why: spawning `git` ties the engine to a binary on `$PATH`, an executable bit, and a shell environment that the consumer may not have. The bundled `parseCommitMetadata` / `parseCommitFiles` accept stdout strings — your code spawns, the engine parses.
+
+## 6. Deterministic
+
+Same input produces the same output, **bit-for-bit**. No `Date.now()`, no `Math.random()`, no unordered iteration in business code.
+
+Why: snapshot tests must work. Running the engine twice on the same commits must produce the same `risk.json`. Cache keys derived from input must be safe to reuse. None of these guarantees survive a single `Math.random()` call.
+
+The engine **does** read commit author dates from input — that's data, not the system clock. ISO-8601 strings flow through unchanged.
+
+## 7. No fabrication
+
+A numeric claim either points to a real commit SHA in `groundedIn`, **or it is `null`.** The engine never defaults to `0` when it has no signal. The opposite is also true: a `0` is a real measurement (e.g. "this file appears in commits but none of them were bug-fix") and **is** grounded.
+
+Why: this is the contract that keeps the OSS engine trustworthy. A naive risk score that returns `0` for every file would technically run, but the consumer can no longer tell *no risk* from *no data*. By forcing the distinction at the type level (`number | null`), every consumer is forced to handle both cases. The engine returns `null`; the gate decides what to do with it.
+
+## How the invariants are enforced
+
+| Invariant     | Enforcement                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| Network I/O   | ESLint `no-restricted-imports` at workspace root + per-package           |
+| LLM clients   | Same — `@anthropic-ai/sdk`, `openai`, `@prcompass/llm-client` blacklisted |
+| DB clients    | Same — `@supabase/*`, `@prcompass/db` blacklisted                        |
+| Env variables | Code review + `package-invariants.test.ts` regex against `process.env`   |
+| Subprocesses  | ESLint `no-restricted-imports` against `child_process`                   |
+| Determinism   | Determinism test runs `analyze()` twice and compares JSON byte-for-byte  |
+| No fabrication | No-fabrication test asserts every numeric claim is `null` or has a non-empty `groundedIn` |
+
+A change that violates any of these fails CI before it can be merged. If you find yourself wanting to bend a rule, that's the moment to write a new adapter or a new gate, not to weaken the engine.
+
+## Why these are not ADRs
+
+The invariants above are the **assumptions** behind every ADR rather than ADRs themselves. ADRs document a chosen path among alternatives; these document the rules every alternative had to satisfy. Future ADRs (smoothing-prior selection, cochange normalisation choice, etc.) live in `docs/adrs/` in the source tree and will be linked from here when they accumulate.

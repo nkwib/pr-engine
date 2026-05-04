@@ -1,0 +1,213 @@
+---
+title: '@prcompass/core · API'
+---
+
+<svelte:head>
+  <title>@prcompass/core · API</title>
+  <meta
+    name="description"
+    content="Public surface of @prcompass/core — analyze, mineCommits, computeChurn, computeCochange, computeHotspots, computeRisk, parseCommitMetadata, parseCommitFiles."
+  />
+</svelte:head>
+
+# API reference
+
+The package exposes a single top-level entry — there are no subpath imports. Modules are grouped by responsibility but everything ships from `'@prcompass/core'`.
+
+## High-level
+
+### `analyze(ctx)`
+
+```ts
+function analyze(ctx: AnalyzeContext): AnalysisOutput;
+```
+
+Runs the full pipeline: `mineCommits → computeChurn → computeCochange → computeHotspots → computeRisk`. **Pure** — no I/O, no `Date.now()`, no `Math.random()`. Same input → same output, bit-for-bit.
+
+```ts
+import { analyze, type AnalyzeContext, type AnalysisOutput } from '@prcompass/core';
+
+const output: AnalysisOutput = analyze(ctx);
+console.log(output.version);  // === ANALYSIS_SCHEMA_VERSION
+```
+
+### `ANALYSIS_SCHEMA_VERSION`
+
+```ts
+const ANALYSIS_SCHEMA_VERSION: '0.1.0';
+```
+
+The schema version emitted as `AnalysisOutput.version`. Bumped when the output shape breaks compat. **Independent** of the package's npm version — consumers can rely on it for parsing without pinning the package.
+
+### `AnalysisOutput`
+
+```ts
+interface AnalysisOutput {
+  readonly version: string;
+  readonly head: { readonly sha: string; readonly baseSha: string };
+  readonly pr: PrMetadata | null;
+  readonly diff: { readonly fileCount: number; readonly files: readonly DiffFile[] };
+  readonly mining: MineStats;
+  readonly hotspots: HotspotsReport;
+  readonly churn: ChurnReport;
+  readonly cochange: CochangeReport;
+  readonly risk: RiskReport;
+}
+```
+
+## Engines
+
+### `mineCommits(opts)`
+
+```ts
+function mineCommits(opts: { commits: readonly CommitRecord[] }): MinedCommits;
+```
+
+Classifies each commit as bug-fix or not, attaches a signal. The bundle also exposes `BUGFIX_REGEX`, `isBugFixCommit`, `filterBugFixCommits` for callers who want the heuristic without running the full pass.
+
+### `computeChurn(opts)`
+
+```ts
+function computeChurn(opts: { mined: MinedCommits }): ChurnReport;
+```
+
+Per-file commit count, bug-fix count, defect density, first/last touched.
+
+### `computeCochange(opts)`
+
+```ts
+function computeCochange(opts: { mined: MinedCommits }): CochangeReport;
+```
+
+File × file co-modification graph with Jaccard weights. Heaviest engine — `O(C × F²)` where `F` is files-per-commit. Default `maxFilesPerCommit: 50` cap prevents pathological commits from blowing the budget.
+
+### `computeHotspots(opts)`
+
+```ts
+function computeHotspots(opts: { mined: MinedCommits }): HotspotsReport;
+```
+
+Bayesian-smoothed bug-fix score per file.
+
+### `computeRisk(opts)`
+
+```ts
+function computeRisk(opts: {
+  mined: MinedCommits;
+  hotspots: HotspotsReport;
+  churn: ChurnReport;
+  cochange: CochangeReport;
+}): RiskReport;
+```
+
+Combines the four engine outputs into a per-file risk report with `groundedIn` SHA pointers and caveats.
+
+## Parsers
+
+These convert raw `git log` stdout into typed records. **Pure** — pass strings, get data.
+
+### `parseCommitMetadata(stdout)`
+
+```ts
+function parseCommitMetadata(stdout: string): CommitMetadata[];
+```
+
+Parses the output of `git log --format=…` with the canonical separator format `%x1e%H%x1f%P%x1f%aN%x1f%aI%x1f%B`.
+
+### `parseCommitFiles(stdout)`
+
+```ts
+function parseCommitFiles(stdout: string): Map<string, string[]>;
+```
+
+Parses the output of `git log --name-only --format='\x1eCOMMIT %H'`. Returns a SHA → filesTouched map.
+
+### Bug-fix heuristic
+
+```ts
+const BUGFIX_REGEX: RegExp;
+function isBugFixCommit(commit: CommitRecord): boolean;
+function filterBugFixCommits(commits: readonly CommitRecord[]): CommitRecord[];
+```
+
+The default regex is the conservative one used internally by `mineCommits`. Override by writing your own filter and feeding the result back in.
+
+## Adapter contract
+
+### `ProviderAdapter`
+
+```ts
+interface ProviderAdapter {
+  readonly name: string;             // 'local' | 'github' | …
+  collect(): Promise<AnalyzeContext>;
+}
+```
+
+Implement this interface to feed the engine from any source. The CLI package ships `LocalAdapter` (subprocess) and `GitHubAdapter` (Octokit + clone). The engine itself never imports adapters — that boundary is enforced by ESLint.
+
+### `AnalyzeContext`
+
+```ts
+interface AnalyzeContext {
+  readonly commits: readonly CommitRecord[];
+  readonly diff: {
+    readonly baseSha: string;
+    readonly headSha: string;
+    readonly files: readonly DiffFile[];
+  };
+  readonly pr: PrMetadata | null;
+}
+```
+
+What every adapter produces. The engine consumes only data, never callbacks.
+
+## Public types (selection)
+
+The engine exports the full type vocabulary alongside its functions. Highlights:
+
+| Type             | Where it appears                                                        |
+| ---------------- | ----------------------------------------------------------------------- |
+| `CommitRecord`   | input to `mineCommits`, return of `parseCommit*`                        |
+| `MinedCommits`   | return of `mineCommits`, input to every other engine                    |
+| `ChurnReport`    | return of `computeChurn`                                                |
+| `CochangeReport` | return of `computeCochange`                                             |
+| `HotspotsReport` | return of `computeHotspots`                                             |
+| `RiskReport`     | return of `computeRisk`; `byFile[path].score ∈ [0, 1] \| null`          |
+| `DiffFile`       | items in `AnalyzeContext.diff.files`; carries `status`, `additions`, …  |
+| `DiffStatus`     | `'added' \| 'modified' \| 'removed' \| 'renamed' \| 'copied'`           |
+
+See JSDoc on every export for the exhaustive shape.
+
+## Module entry
+
+```ts
+import {
+  // High-level
+  analyze,
+  ANALYSIS_SCHEMA_VERSION,
+  type AnalysisOutput,
+
+  // Engines
+  mineCommits,
+  computeChurn,
+  computeCochange,
+  computeHotspots,
+  computeRisk,
+
+  // Parsers
+  parseCommitMetadata,
+  parseCommitFiles,
+  BUGFIX_REGEX,
+  isBugFixCommit,
+  filterBugFixCommits,
+
+  // Adapter contract
+  type ProviderAdapter,
+  type AnalyzeContext,
+  type CommitRecord,
+  type DiffFile,
+  type DiffStatus
+} from '@prcompass/core';
+```
+
+There is **no** subpath namespace — everything ships from `'@prcompass/core'`. New behaviour arrives as new top-level exports, never as `@prcompass/core/something`.

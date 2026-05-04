@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <style>
+    .b { fill: none; stroke: #0f172a; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .a { fill: none; stroke: #0e7490; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .f { fill: #0e7490; stroke: none; }
+    @media (prefers-color-scheme: dark) {
+      .b { stroke: #e2e8f0; }
+      .a { stroke: #22d3ee; }
+      .f { fill: #22d3ee; }
+    }
+  </style>
+  <rect class="b" x="3" y="3" width="26" height="26" rx="5" />
+  <circle class="a" cx="16" cy="16" r="8.5" />
+  <path class="f" d="M16 8 L18 16 L16 17 L14 16 Z" />
+  <circle class="f" cx="16" cy="16" r="1.5" />
+</svg>
