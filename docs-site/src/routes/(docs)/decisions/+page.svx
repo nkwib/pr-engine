@@ -1,12 +1,12 @@
 ---
-title: '@prcompass/core · Invariants'
+title: '@nkwib/pr-engine · Invariants'
 ---
 
 <svelte:head>
-  <title>@prcompass/core · Invariants</title>
+  <title>@nkwib/pr-engine · Invariants</title>
   <meta
     name="description"
-    content="The seven non-negotiable invariants that keep the @prcompass/core engine deterministic, grounded, and side-effect-free."
+    content="The seven non-negotiable invariants that keep the @nkwib/pr-engine engine deterministic, grounded, and side-effect-free."
   />
 </svelte:head>
 
@@ -20,17 +20,17 @@ These rules are non-negotiable. ESLint enforces import-side at the workspace roo
 
 No `fetch`, no `octokit`, no `node:http`. **Inputs come in as data; outputs go out as data.**
 
-Why: a deterministic engine that talks to the network is not deterministic. Even with caches, the network introduces clock-skew failures, rate-limit surprises, and a maintenance surface that has nothing to do with the metrics being computed. The adapters layer ([`@prcompass/cli`](https://github.com/nkwib/pr-analyze)) carries that burden so the engine doesn't have to.
+Why: a deterministic engine that talks to the network is not deterministic. Even with caches, the network introduces clock-skew failures, rate-limit surprises, and a maintenance surface that has nothing to do with the metrics being computed. The adapters layer ([`@nkwib/pr-analyze`](https://github.com/nkwib/pr-analyze)) carries that burden so the engine doesn't have to.
 
 ## 2. No LLM clients
 
-No `@anthropic-ai/sdk`, no `openai`, no `@prcompass/llm-client`. **Every claim is derived from real commit history, not generated.**
+No `@anthropic-ai/sdk`, no `openai`, no `@nkwib/llm-client`. **Every claim is derived from real commit history, not generated.**
 
 Why: this is the OSS deterministic floor that everyone can verify. LLM enrichment lives in the closed-source hosted product; the engine ships only the metrics that fall out of arithmetic on commit metadata.
 
 ## 3. No DB clients
 
-No `@supabase/*`, no `@prcompass/db`. **The package neither reads nor writes persistent storage.**
+No `@supabase/*`, no `@nkwib/db`. **The package neither reads nor writes persistent storage.**
 
 Why: a database introduces a stateful surface that breaks determinism (different rows = different output) and forces every consumer to provision infrastructure they may not need. The engine accepts data, returns data.
 
@@ -65,8 +65,8 @@ Why: this is the contract that keeps the OSS engine trustworthy. A naive risk sc
 | Invariant     | Enforcement                                                              |
 | ------------- | ------------------------------------------------------------------------ |
 | Network I/O   | ESLint `no-restricted-imports` at workspace root + per-package           |
-| LLM clients   | Same — `@anthropic-ai/sdk`, `openai`, `@prcompass/llm-client` blacklisted |
-| DB clients    | Same — `@supabase/*`, `@prcompass/db` blacklisted                        |
+| LLM clients   | Same — `@anthropic-ai/sdk`, `openai`, `@nkwib/llm-client` blacklisted |
+| DB clients    | Same — `@supabase/*`, `@nkwib/db` blacklisted                        |
 | Env variables | Code review + `package-invariants.test.ts` regex against `process.env`   |
 | Subprocesses  | ESLint `no-restricted-imports` against `child_process`                   |
 | Determinism   | Determinism test runs `analyze()` twice and compares JSON byte-for-byte  |

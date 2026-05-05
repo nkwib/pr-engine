@@ -5,17 +5,17 @@
 <footer class="footer">
   <div class="inner">
     <div class="meta">
-      <span class="brand-mark">@prcompass/core</span>
+      <span class="brand-mark">@nkwib/pr-engine</span>
       <span class="dot" aria-hidden="true">·</span>
       <span class="muted">Deterministic engine — mining, churn, cochange, hotspots, risk</span>
     </div>
     <div class="links">
       <a href="https://github.com/nkwib/pr-engine" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://www.npmjs.com/package/@prcompass/core" target="_blank" rel="noopener">npm</a>
+      <a href="https://www.npmjs.com/package/@nkwib/pr-engine" target="_blank" rel="noopener">npm</a>
       <a
         href="https://github.com/nkwib/pr-engine/blob/main/LICENSE"
         target="_blank"
-        rel="noopener">Apache-2.0</a
+        rel="noopener">MIT</a
       >
     </div>
     <div class="copyright">© {year} · Built with SvelteKit + MDsveX</div>

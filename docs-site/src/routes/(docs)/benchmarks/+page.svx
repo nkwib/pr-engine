@@ -1,18 +1,18 @@
 ---
-title: '@prcompass/core · Benchmarks'
+title: '@nkwib/pr-engine · Benchmarks'
 ---
 
 <svelte:head>
-  <title>@prcompass/core · Benchmarks</title>
+  <title>@nkwib/pr-engine · Benchmarks</title>
   <meta
     name="description"
-    content="Reproducible benchmarks for the @prcompass/core engine. ~7.5 ms median for the full analyze() pipeline over 10 000 commits / 500 files."
+    content="Reproducible benchmarks for the @nkwib/pr-engine engine. ~7.5 ms median for the full analyze() pipeline over 10 000 commits / 500 files."
   />
 </svelte:head>
 
 # Benchmarks
 
-Reproducible: `pnpm -F @prcompass/core bench`. The benchmark uses a deterministic synthetic repo (`bench/synthetic.ts`) — same input every run, no PRNG, no I/O.
+Reproducible: `pnpm -F @nkwib/pr-engine bench`. The benchmark uses a deterministic synthetic repo (`bench/synthetic.ts`) — same input every run, no PRNG, no I/O.
 
 ## Headline number
 
@@ -58,7 +58,7 @@ The `analyze()` 7.5 ms median is comfortable for use as a sub-step in a hosted P
 
 ```sh
 pnpm install
-pnpm -F @prcompass/core bench
+pnpm -F @nkwib/pr-engine bench
 ```
 
 Bench runs are **deterministic** — same numbers ± the rme variance. If you see more than 5 % drift between runs on identical hardware, that's a regression — open an issue.

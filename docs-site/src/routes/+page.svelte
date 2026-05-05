@@ -1,5 +1,5 @@
 <svelte:head>
-  <title>@prcompass/core — deterministic risk engine for git history</title>
+  <title>@nkwib/pr-engine — deterministic risk engine for git history</title>
   <meta
     name="description"
     content="Mining → churn → cochange → hotspots → risk. ~7.5 ms over 10 000 commits. Same input always produces the same bytes."
@@ -11,14 +11,14 @@
     <div class="hero-copy">
       <span class="badge">
         <span class="dot" aria-hidden="true"></span>
-        v0.1 · Apache-2.0 · ESM · Node 20+
+        v0.1 · MIT · ESM · Node 20+
       </span>
       <h1>
         Risk metrics from your<br />
         <span class="accent">commit history</span>. Always reproducible.
       </h1>
       <p class="lede">
-        <strong>@prcompass/core</strong> turns a list of git commits into
+        <strong>@nkwib/pr-engine</strong> turns a list of git commits into
         per-file risk metrics. No network. No LLM. No database. Same input
         always produces the same output, bit-for-bit.
       </p>
@@ -28,7 +28,7 @@
         <a class="btn ghost" href="/pipeline">See the pipeline</a>
       </div>
 
-      <pre class="install"><span class="prompt">$</span> npm install @prcompass/core</pre>
+      <pre class="install"><span class="prompt">$</span> npm install @nkwib/pr-engine</pre>
     </div>
 
     <aside class="demo">
@@ -41,7 +41,7 @@
       <pre class="demo-code"><code><span class="kw">import</span> &lbrace;
   mineCommits, computeChurn, computeCochange,
   computeHotspots, computeRisk
-&rbrace; <span class="kw">from</span> <span class="str">'@prcompass/core'</span>;
+&rbrace; <span class="kw">from</span> <span class="str">'@nkwib/pr-engine'</span>;
 
 <span class="cmt">// 1. You produce CommitRecord[] yourself.</span>
 <span class="kw">const</span> commits = <span class="kw">await</span> <span class="fn">listCommits</span>(repo);
@@ -172,7 +172,7 @@
     </div>
     <pre class="ports-code"><code><span class="kw">import</span> &lbrace;
   parseCommitMetadata, parseCommitFiles, <span class="kw">type</span> CommitRecord
-&rbrace; <span class="kw">from</span> <span class="str">'@prcompass/core'</span>;
+&rbrace; <span class="kw">from</span> <span class="str">'@nkwib/pr-engine'</span>;
 
 <span class="kw">const</span> META  = <span class="str">"%x1e%H%x1f%P%x1f%aN%x1f%aI%x1f%B"</span>;
 <span class="kw">const</span> FILES = <span class="str">"\x1eCOMMIT %H"</span>;
