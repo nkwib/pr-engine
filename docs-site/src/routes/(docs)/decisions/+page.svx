@@ -20,7 +20,7 @@ These rules are non-negotiable. ESLint enforces import-side at the workspace roo
 
 No `fetch`, no `octokit`, no `node:http`. **Inputs come in as data; outputs go out as data.**
 
-Why: a deterministic engine that talks to the network is not deterministic. Even with caches, the network introduces clock-skew failures, rate-limit surprises, and a maintenance surface that has nothing to do with the metrics being computed. The adapters layer ([`@prcompass/cli`](https://github.com/nkwib/prcompass-cli)) carries that burden so the engine doesn't have to.
+Why: a deterministic engine that talks to the network is not deterministic. Even with caches, the network introduces clock-skew failures, rate-limit surprises, and a maintenance surface that has nothing to do with the metrics being computed. The adapters layer ([`@prcompass/cli`](https://github.com/nkwib/pr-analyze)) carries that burden so the engine doesn't have to.
 
 ## 2. No LLM clients
 

@@ -19,9 +19,9 @@
 
 <header class="header">
   <div class="inner">
-    <a href="/" class="brand" aria-label="prcompass core home">
+    <a href="/" class="brand" aria-label="pr-engine home">
       <Logo />
-      <span class="version" aria-hidden="true">core · v0.1</span>
+      <span class="version" aria-hidden="true">engine · v0.1</span>
     </a>
 
     <nav class="nav" aria-label="Primary">
@@ -39,7 +39,7 @@
     <div class="actions">
       <a
         class="gh"
-        href="https://github.com/nkwib/prcompass-core"
+        href="https://github.com/nkwib/pr-engine"
         target="_blank"
         rel="noopener"
         aria-label="GitHub repository"

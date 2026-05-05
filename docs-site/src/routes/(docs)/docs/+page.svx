@@ -25,7 +25,7 @@ npm install @prcompass/core
 # or pnpm / yarn / bun
 ```
 
-Public API is **frozen at 1.0.0** per [VERSIONING.md](https://github.com/nkwib/prcompass-core/blob/main/docs/oss/VERSIONING.md). Until then, breaking changes only happen between minor versions and are listed in `CHANGELOG.md`.
+Public API is **frozen at 1.0.0** per [VERSIONING.md](https://github.com/nkwib/pr-engine/blob/main/docs/oss/VERSIONING.md). Until then, breaking changes only happen between minor versions and are listed in `CHANGELOG.md`.
 
 <h2 id="quick-start">Quick start</h2>
 
@@ -90,7 +90,7 @@ async function listCommits(repoDir: string): Promise<CommitRecord[]> {
 }
 ```
 
-The [`@prcompass/cli`](https://github.com/nkwib/prcompass-cli) package ships a `LocalAdapter` that does exactly this. Use it directly if you don't want to write subprocess code.
+The [`@prcompass/cli`](https://github.com/nkwib/pr-analyze) package ships a `LocalAdapter` that does exactly this. Use it directly if you don't want to write subprocess code.
 
 <h2 id="high-level">One-shot — <code>analyze(ctx)</code></h2>
 
@@ -121,7 +121,7 @@ This package is the **engine**. It deliberately does not:
 - Call an LLM, post comments, or suggest fixes.
 - Write to a database.
 
-Those concerns belong to **adapters** ([`LocalAdapter`, `GitHubAdapter`](https://github.com/nkwib/prcompass-cli)) and **gates** (the closed-source PR Compass hosted product). The engine itself is the data-only core that those layers wrap.
+Those concerns belong to **adapters** ([`LocalAdapter`, `GitHubAdapter`](https://github.com/nkwib/pr-analyze)) and **gates** (the closed-source PR Compass hosted product). The engine itself is the data-only core that those layers wrap.
 
 ESLint rules at the workspace root, the `package-invariants.test.ts` per package, and code review enforce these constraints. See [/decisions](/decisions) for the full invariant list.
 

@@ -15,7 +15,7 @@
     <circle cx="16" cy="16" r="2.5" fill="currentColor" />
     <path d="M16 6 L18 14 L16 16 L14 14 Z" fill="currentColor" />
   </svg>
-  <span class="wordmark">prcompass-core</span>
+  <span class="wordmark">pr-engine</span>
 </span>
 
 <style>

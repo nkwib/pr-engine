@@ -5,7 +5,7 @@
   let mounted = $state(false);
 
   onMount(() => {
-    const stored = localStorage.getItem('prcompass-core-theme');
+    const stored = localStorage.getItem('pr-engine-theme');
     const initial =
       stored === 'light' || stored === 'dark'
         ? stored
@@ -20,7 +20,7 @@
   function toggle() {
     theme = theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('prcompass-core-theme', theme);
+    localStorage.setItem('pr-engine-theme', theme);
   }
 </script>
 
