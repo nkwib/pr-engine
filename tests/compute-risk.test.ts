@@ -11,7 +11,7 @@ function commit(overrides: Partial<CommitRecord>): CommitRecord {
     sha: "abc",
     parentSha: null,
     message: "feat: thing",
-    authorLogin: "alice",
+    authorName: "alice",
     authoredAt: "2026-04-01T00:00:00Z",
     filesTouched: [],
     ...overrides,
@@ -260,5 +260,91 @@ describe("computeRisk — JSON cleanness + determinism", () => {
     const before = JSON.stringify(p);
     computeRisk(p);
     expect(JSON.stringify(p)).toBe(before);
+  });
+});
+
+describe("computeRisk — couplingDegree grounding (regression)", () => {
+  it("couplingDegree.groundedIn is non-empty when value > 0 (no fabrication)", () => {
+    // Build commits so that 'a.ts' co-changes with 'b.ts' and 'c.ts'
+    // strongly enough to clear the default Jaccard threshold (0.3).
+    const commits: CommitRecord[] = [];
+    for (let i = 0; i < 6; i += 1) {
+      commits.push(
+        commit({
+          sha: `pair${i}`,
+          message: i === 0 ? "fix: x" : "feat: y",
+          authoredAt: `2026-04-${String(i + 1).padStart(2, "0")}T00:00:00Z`,
+          filesTouched: ["a.ts", "b.ts", "c.ts"],
+        }),
+      );
+    }
+    const p = pipeline(commits);
+    const r = computeRisk(p);
+    const fr = r.byFile["a.ts"];
+    expect(fr).toBeDefined();
+    expect(fr?.couplingDegree.value).toBeGreaterThan(0);
+    // groundedIn must list the strongly-coupled neighbour files that drove
+    // the count — not be empty.
+    expect(fr?.couplingDegree.groundedIn.length).toBe(fr?.couplingDegree.value);
+    expect(new Set(fr?.couplingDegree.groundedIn)).toEqual(
+      new Set(["b.ts", "c.ts"]),
+    );
+  });
+
+  it("couplingDegree.groundedIn is empty when value is 0", () => {
+    // Two files never co-change: each appears in its own commit.
+    const commits = [
+      commit({ sha: "1", message: "fix: x", filesTouched: ["a.ts"] }),
+      commit({ sha: "2", message: "feat: y", filesTouched: ["b.ts"] }),
+    ];
+    const p = pipeline(commits);
+    const r = computeRisk(p);
+    expect(r.byFile["a.ts"]?.couplingDegree.value).toBe(0);
+    expect(r.byFile["a.ts"]?.couplingDegree.groundedIn).toEqual([]);
+  });
+});
+
+describe("computeRisk — recency clamping (regression)", () => {
+  it("score stays in [0, 1] when opts.now precedes the file's last commit", () => {
+    const commits = [
+      commit({
+        sha: "1",
+        message: "fix: x",
+        authoredAt: "2026-04-01T00:00:00Z",
+        filesTouched: ["a.ts"],
+      }),
+      commit({
+        sha: "2",
+        message: "feat: y",
+        authoredAt: "2026-06-01T00:00:00Z",
+        filesTouched: ["a.ts"],
+      }),
+    ];
+    const p = pipeline(commits);
+    // `now` is BEFORE the latest commit — caller passed clock-skewed or
+    // a window-start instead of an instant. Score must still be in [0, 1].
+    const r = computeRisk({ ...p, now: "2026-01-01T00:00:00Z" });
+    const score = r.byFile["a.ts"]?.score;
+    expect(score).not.toBeNull();
+    expect(score).toBeGreaterThanOrEqual(0);
+    expect(score).toBeLessThanOrEqual(1);
+  });
+
+  it("recencyDays.value remains the (possibly negative) raw difference; only the score component is clamped", () => {
+    // The raw recencyDays metric is informational and reflects the
+    // wall-clock delta. Clamping happens inside the score combination.
+    const p = pipeline([
+      commit({
+        sha: "1",
+        message: "fix: x",
+        authoredAt: "2026-06-01T00:00:00Z",
+        filesTouched: ["a.ts"],
+      }),
+    ]);
+    const r = computeRisk({ ...p, now: "2026-01-01T00:00:00Z" });
+    const days = r.byFile["a.ts"]?.recencyDays.value;
+    expect(days).not.toBeNull();
+    // The metric reports the real (negative) difference for transparency.
+    expect(days).toBeLessThan(0);
   });
 });

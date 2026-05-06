@@ -35,7 +35,7 @@ describe("parseCommitMetadata", () => {
       {
         sha: "a1b2c3",
         parentSha: "p1",
-        authorLogin: "alice",
+        authorName: "alice",
         authoredAt: "2026-04-01T10:00:00Z",
         message: "fix: off-by-one",
       },
@@ -75,7 +75,7 @@ describe("parseCommitMetadata", () => {
     expect(parseCommitMetadata(out)[0]?.parentSha).toBeNull();
   });
 
-  it("returns authorLogin=null when author field is empty", () => {
+  it("returns authorName=null when author field is empty", () => {
     const out = metaRecord({
       sha: "a",
       parents: "p",
@@ -83,7 +83,7 @@ describe("parseCommitMetadata", () => {
       authoredAt: "t",
       message: "msg",
     });
-    expect(parseCommitMetadata(out)[0]?.authorLogin).toBeNull();
+    expect(parseCommitMetadata(out)[0]?.authorName).toBeNull();
   });
 
   it("parses multiple commits in order", () => {

@@ -15,7 +15,11 @@ export interface CommitRecord {
   readonly sha: string;
   readonly parentSha: string | null;
   readonly message: string;
-  readonly authorLogin: string | null;
+  /**
+   * Git author **name** (`%aN`), not a GitHub login. Free-form display
+   * string from the local commit's author identity.
+   */
+  readonly authorName: string | null;
   /** ISO 8601 author date. */
   readonly authoredAt: string;
   readonly filesTouched: readonly string[];

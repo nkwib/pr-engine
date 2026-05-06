@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "Deterministic engine for PR Compass: commit-mining, churn, cochange, risk-scoring. Zero network, zero LLM, zero DB. Fixture-in, JSON-out.",
   "license": "Apache-2.0",
-  "private": true,
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,6 +16,7 @@
     "dist",
     "README.md",
     "CHANGELOG.md",
+    "BENCHMARKS.md",
     "LICENSE"
   ],
   "keywords": [
@@ -31,12 +31,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nkwib/prcompass-core.git"
+    "url": "https://github.com/nkwib/pr-engine.git"
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run"

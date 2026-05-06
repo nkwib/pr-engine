@@ -71,7 +71,7 @@ These rules are non-negotiable. ESLint enforces import-side at the workspace roo
 | `hotspots`      | `computeHotspots(opts)`                                 | Bayesian-smoothed bug-fix score per file.                                 |
 | `risk`          | `computeRisk(opts)`                                     | Combine the above into a per-file risk report.                            |
 
-All public types live alongside their function. See JSDoc for full details (`pnpm typedoc` will generate browseable docs in M13.4).
+All public types live alongside their function. See JSDoc for full details.
 
 ## Producing `CommitRecord[]`
 

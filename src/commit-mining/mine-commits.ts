@@ -19,10 +19,21 @@ interface Classification {
   readonly signal: BugFixSignal | null;
 }
 
+function testPattern(pattern: RegExp, message: string): boolean {
+  // Stateful regex flags (`g`, `y`) advance `lastIndex` between calls,
+  // which would cause `.test()` to skip matches on subsequent commits.
+  // Reset the index defensively before each call so callers can pass any
+  // RegExp (including ones with `g`) without surprising behaviour.
+  if (pattern.global || pattern.sticky) {
+    pattern.lastIndex = 0;
+  }
+  return pattern.test(message);
+}
+
 function classify(commit: CommitRecord, detector: BugFixDetector): Classification {
   const matched =
     detector.kind === "regex"
-      ? detector.pattern.test(commit.message)
+      ? testPattern(detector.pattern, commit.message)
       : detector.predicate(commit);
   if (!matched) return { isBugFix: false, signal: null };
   return { isBugFix: true, signal: inferBugFixSignal(commit.message) };

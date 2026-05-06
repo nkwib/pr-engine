@@ -12,7 +12,7 @@ function commit(overrides: Partial<CommitRecord>): CommitRecord {
     sha: "abc",
     parentSha: null,
     message: "feat: thing",
-    authorLogin: "alice",
+    authorName: "alice",
     authoredAt: "2026-04-01T00:00:00Z",
     filesTouched: [],
     ...overrides,
