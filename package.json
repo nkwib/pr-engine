@@ -1,8 +1,11 @@
 {
   "name": "@prcompass/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deterministic engine for PR Compass: commit-mining, churn, cochange, risk-scoring. Zero network, zero LLM, zero DB. Fixture-in, JSON-out.",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
