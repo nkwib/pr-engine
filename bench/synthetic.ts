@@ -42,7 +42,7 @@ export function generateSyntheticRepo(
       sha: `s${i.toString(16).padStart(8, "0")}`,
       parentSha: i === 0 ? null : `s${(i - 1).toString(16).padStart(8, "0")}`,
       message,
-      authorLogin: i % 7 === 0 ? "alice" : "bob",
+      authorName: i % 7 === 0 ? "alice" : "bob",
       authoredAt: isoForIndex(i, o.commitCount),
       filesTouched,
     });

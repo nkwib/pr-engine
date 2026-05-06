@@ -8,10 +8,22 @@
  * @packageDocumentation
  */
 
-interface ParsedCommitMetadata {
+/**
+ * Output shape of {@link parseCommitMetadata}: one record per commit,
+ * minus the file list (filled in via {@link parseCommitFiles} and joined
+ * by the caller into a {@link CommitRecord}).
+ *
+ * @public
+ */
+export interface ParsedCommitMetadata {
   readonly sha: string;
   readonly parentSha: string | null;
-  readonly authorLogin: string | null;
+  /**
+   * The git author **name** (`%aN`), not a GitHub login. This comes
+   * from the local commit's author identity and may be a display name,
+   * full name, or anything the author configured.
+   */
+  readonly authorName: string | null;
   readonly authoredAt: string;
   readonly message: string;
 }
@@ -42,7 +54,7 @@ export function parseCommitMetadata(output: string): ParsedCommitMetadata[] {
     commits.push({
       sha,
       parentSha: firstParent.length > 0 ? firstParent : null,
-      authorLogin: author.length > 0 ? author : null,
+      authorName: author.length > 0 ? author : null,
       authoredAt,
       message,
     });

@@ -7,7 +7,7 @@ function commit(overrides: Partial<CommitRecord>): CommitRecord {
     sha: "abc",
     parentSha: null,
     message: "feat: thing",
-    authorLogin: "alice",
+    authorName: "alice",
     authoredAt: "2026-04-01T00:00:00Z",
     filesTouched: [],
     ...overrides,
@@ -63,7 +63,7 @@ describe("mineCommits — default detector", () => {
       sha: "a",
       parentSha: "p",
       message: "fix: x",
-      authorLogin: "bob",
+      authorName: "bob",
       authoredAt: "2026-01-01T00:00:00Z",
       filesTouched: ["src/x.ts"],
     });
@@ -71,7 +71,7 @@ describe("mineCommits — default detector", () => {
     const m = r.commits[0]!;
     expect(m.sha).toBe("a");
     expect(m.parentSha).toBe("p");
-    expect(m.authorLogin).toBe("bob");
+    expect(m.authorName).toBe("bob");
     expect(m.authoredAt).toBe("2026-01-01T00:00:00Z");
     expect(m.filesTouched).toEqual(["src/x.ts"]);
   });
@@ -117,6 +117,34 @@ describe("mineCommits — custom regex detector", () => {
       bugFixDetector: { kind: "regex", pattern: /./ },
     });
     expect(r.commits[0]?.bugFixSignal).toBe("subject-prefix");
+  });
+
+  it("matches every commit when the custom regex carries the global flag (regression: lastIndex must be reset)", () => {
+    // A `g`-flagged RegExp keeps `lastIndex` between calls. Without a
+    // defensive reset, the second `.test()` would resume mid-string
+    // and miss the match — every other commit would silently fail.
+    const r = mineCommits({
+      commits: [
+        commit({ sha: "a", message: "WORKAROUND: thing" }),
+        commit({ sha: "b", message: "WORKAROUND: thing" }),
+        commit({ sha: "c", message: "WORKAROUND: thing" }),
+        commit({ sha: "d", message: "WORKAROUND: thing" }),
+      ],
+      bugFixDetector: { kind: "regex", pattern: /WORKAROUND/g },
+    });
+    expect(r.commits.map((c) => c.isBugFix)).toEqual([true, true, true, true]);
+    expect(r.stats.bugFixCommits).toBe(4);
+  });
+
+  it("matches every commit when the custom regex carries the sticky flag", () => {
+    const r = mineCommits({
+      commits: [
+        commit({ sha: "a", message: "WORKAROUND" }),
+        commit({ sha: "b", message: "WORKAROUND" }),
+      ],
+      bugFixDetector: { kind: "regex", pattern: /WORKAROUND/y },
+    });
+    expect(r.commits.map((c) => c.isBugFix)).toEqual([true, true]);
   });
 });
 

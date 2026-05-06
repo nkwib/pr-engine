@@ -139,10 +139,18 @@ export function computeRisk(opts: RiskOpts): RiskReport {
       couplingMetric = NO_SIGNAL_COUPLING;
     } else {
       let strong = 0;
+      const groundingFiles: string[] = [];
       for (const edge of co.neighbors) {
-        if (edge.jaccard >= strongCouplingJaccard) strong += 1;
+        if (edge.jaccard >= strongCouplingJaccard) {
+          strong += 1;
+          groundingFiles.push(edge.file);
+        }
       }
-      couplingMetric = { value: strong, groundedIn: [] };
+      // groundedIn: the cochange neighbor file paths whose Jaccard met the
+      // threshold and therefore drove the strong-coupling count. Empty when
+      // value is 0 (no claim made). Files are used here (not commit SHAs)
+      // because cochange edges aggregate over many commits.
+      couplingMetric = { value: strong, groundedIn: groundingFiles };
     }
 
     let recencyMetric: RiskMetric;
@@ -176,7 +184,12 @@ export function computeRisk(opts: RiskOpts): RiskReport {
       totalWeight += weights.couplingDegree;
     }
     if (recencyMetric.value !== null) {
-      const recencyNorm = Math.exp(-recencyMetric.value / recencyHalfLifeDays);
+      // Clamp days to a non-negative value: if `opts.now` precedes the
+      // file's last commit (clock skew, caller passed a "since" instead
+      // of "now"), treat recency as "just edited" instead of letting
+      // exp(-negative) push the score above 1.
+      const daysClamped = Math.max(0, recencyMetric.value);
+      const recencyNorm = Math.exp(-daysClamped / recencyHalfLifeDays);
       weighted += weights.recencyDays * recencyNorm;
       totalWeight += weights.recencyDays;
     }

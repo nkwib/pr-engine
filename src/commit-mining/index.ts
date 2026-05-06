@@ -16,6 +16,10 @@ export type {
 
 export { BUGFIX_REGEX, filterBugFixCommits, isBugFixCommit } from "./bugfix.js";
 
-export { parseCommitFiles, parseCommitMetadata } from "./parse-git-log.js";
+export {
+  parseCommitFiles,
+  parseCommitMetadata,
+  type ParsedCommitMetadata,
+} from "./parse-git-log.js";
 
 export { mineCommits } from "./mine-commits.js";
