@@ -1,18 +1,18 @@
 ---
-title: '@nkwib/pr-engine · Benchmarks'
+title: '@prcompass/core · Benchmarks'
 ---
 
 <svelte:head>
-  <title>@nkwib/pr-engine · Benchmarks</title>
+  <title>@prcompass/core · Benchmarks</title>
   <meta
     name="description"
-    content="Reproducible benchmarks for the @nkwib/pr-engine engine. ~7.5 ms median for the full analyze() pipeline over 10 000 commits / 500 files."
+    content="Reproducible benchmarks for the @prcompass/core engine. ~7.5 ms median for the full analyze() pipeline over 10 000 commits / 500 files."
   />
 </svelte:head>
 
 # Benchmarks
 
-Reproducible: `pnpm -F @nkwib/pr-engine bench`. The benchmark uses a deterministic synthetic repo (`bench/synthetic.ts`) — same input every run, no PRNG, no I/O.
+Reproducible: `pnpm -F @prcompass/core bench`. The benchmark uses a deterministic synthetic repo (`bench/synthetic.ts`) — same input every run, no PRNG, no I/O.
 
 ## Headline number
 
@@ -45,7 +45,7 @@ Variance: ±0.5 % to ±2 % relative (`rme`), ≥ 67 samples each.
 **Not measured:**
 
 - `git log` subprocess (LocalAdapter), `octokit` REST calls (GitHubAdapter): adapter-side, dominated by external I/O.
-- JSON serialisation of the output: small (under 10 ms even on a 100-file PR), measured separately by the CLI smoke workflow.
+- JSON serialisation of the output: small (under 10 ms even on a 100-file PR), not part of this engine benchmark.
 - Memory: typical run holds the full mined commit array (~10 k entries, ~5 MB) plus the cochange adjacency (~50–100 k edges, ~5 MB). Under 50 MB peak resident at this scale.
 
 ## Performance budget
@@ -58,11 +58,11 @@ The `analyze()` 7.5 ms median is comfortable for use as a sub-step in a hosted P
 
 ```sh
 pnpm install
-pnpm -F @nkwib/pr-engine bench
+pnpm -F @prcompass/core bench
 ```
 
 Bench runs are **deterministic** — same numbers ± the rme variance. If you see more than 5 % drift between runs on identical hardware, that's a regression — open an issue.
 
 ## What changed since the last release
 
-The current bench reflects v0.1.0. Subsequent releases will add a row at the top of "Detailed results" with the same workload at the same hardware class so trends are visible at a glance, not buried in commit history.
+The numbers above were last recorded on v0.1.0 and have not been re-run since. Subsequent releases will add a row at the top of "Detailed results" with the same workload at the same hardware class so trends are visible at a glance, not buried in commit history.

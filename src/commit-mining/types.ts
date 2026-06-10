@@ -76,15 +76,21 @@ export interface MineOpts {
 }
 
 /**
- * Aggregate stats over the input commits. `null` when there are zero
- * commits — never defaults to `0` or empty string.
+ * Aggregate stats over the input commits. The string date fields are
+ * `null` when there are zero commits rather than an empty string. The
+ * numeric counters (`totalCommits`, `bugFixCommits`) are real `0` counts in
+ * that case, and `bugFixRatio` is `0` as documented on the field below.
  *
  * @public
  */
 export interface MineStats {
   readonly totalCommits: number;
   readonly bugFixCommits: number;
-  /** In `[0, 1]`. `0` when there are zero commits. */
+  /**
+   * Bug-fix commits divided by total commits, in `[0, 1]`. Defined as `0`
+   * for an empty commit list (the `0 / 0` case is reported as `0`, not
+   * `NaN` or `null`).
+   */
   readonly bugFixRatio: number;
   readonly earliestAuthoredAt: string | null;
   readonly latestAuthoredAt: string | null;

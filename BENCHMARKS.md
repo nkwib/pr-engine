@@ -33,7 +33,7 @@ Measured:
 Not measured:
 
 - `git log` subprocess (LocalAdapter), `octokit` REST calls (GitHubAdapter): adapter-side, dominated by external I/O.
-- JSON serialisation of the output: small (<10 ms even on a 100-file PR), measured separately by the CLI smoke workflow.
+- JSON serialisation of the output: small (<10 ms even on a 100-file PR), not part of this engine benchmark.
 - Memory: typical run holds the full mined commit array (~10k entries, ~5 MB) plus the cochange adjacency (~50–100k edges, ~5 MB). Under 50 MB peak resident at this scale.
 
 ## Performance budget
