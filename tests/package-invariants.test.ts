@@ -12,8 +12,8 @@ const pkg = JSON.parse(
 describe("@prcompass/core package invariants", () => {
   it("declares zero runtime dependencies", () => {
     // Core ships as part of the OSS surface and must remain dependency-free
-    // at runtime. Adding a dependency here is a CHIEDE per ROADMAP § M11
-    // invariants; do not bypass.
+    // at runtime. Adding a runtime dependency here is a violation of the
+    // ROADMAP § M11 invariants; do not bypass.
     expect(pkg.dependencies).toEqual({});
   });
 

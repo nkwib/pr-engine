@@ -1,9 +1,9 @@
 ---
-title: '@nkwib/pr-engine · Guide'
+title: '@prcompass/core · Guide'
 ---
 
 <svelte:head>
-  <title>@nkwib/pr-engine · Guide</title>
+  <title>@prcompass/core · Guide</title>
   <meta
     name="description"
     content="The deterministic engine for PR Compass: turns a list of git commits into per-file risk metrics. No network, no LLM, no database."
@@ -12,7 +12,7 @@ title: '@nkwib/pr-engine · Guide'
 
 # Guide
 
-`@nkwib/pr-engine` is the **deterministic engine** for PR Compass. It turns a list of git commits into per-file risk metrics. No network, no LLM, no database. Same input always produces the same output, bit-for-bit.
+`@prcompass/core` is the **deterministic engine** for PR Compass. It turns a list of git commits into per-file risk metrics. No network, no LLM, no database. Same input always produces the same output, bit-for-bit.
 
 This package backs the OSS release of the [PR Compass](https://prcompass.dev) hosted product. The hosted product is the closed-source layer above; this engine is what computes "which file looks risky" given the repository's commit history.
 
@@ -21,7 +21,7 @@ ESM-only. Requires Node 20+.
 <h2 id="install">Install</h2>
 
 ```sh
-npm install @nkwib/pr-engine
+npm install @prcompass/core
 # or pnpm / yarn / bun
 ```
 
@@ -36,7 +36,7 @@ import {
   computeCochange,
   computeHotspots,
   computeRisk
-} from '@nkwib/pr-engine';
+} from '@prcompass/core';
 
 // 1. You produce CommitRecord[] yourself (e.g. via git log).
 const commits = await yourGitDriver.listCommits();
@@ -70,7 +70,7 @@ import {
   parseCommitMetadata,
   parseCommitFiles,
   type CommitRecord
-} from '@nkwib/pr-engine';
+} from '@prcompass/core';
 
 const run = promisify(execFile);
 
@@ -90,14 +90,14 @@ async function listCommits(repoDir: string): Promise<CommitRecord[]> {
 }
 ```
 
-The [`@nkwib/pr-analyze`](https://github.com/nkwib/pr-analyze) package ships a `LocalAdapter` that does exactly this. Use it directly if you don't want to write subprocess code.
+The [`@prcompass/cli`](https://github.com/nkwib/pr-analyze) package ships a `LocalAdapter` that does exactly this. Use it directly if you don't want to write subprocess code.
 
 <h2 id="high-level">One-shot — <code>analyze(ctx)</code></h2>
 
 If you already have an `AnalyzeContext` (commits + diff + optional PR metadata), the high-level entry point runs the whole pipeline in one call:
 
 ```ts
-import { analyze, ANALYSIS_SCHEMA_VERSION, type AnalysisOutput } from '@nkwib/pr-engine';
+import { analyze, ANALYSIS_SCHEMA_VERSION, type AnalysisOutput } from '@prcompass/core';
 
 const output: AnalysisOutput = analyze(ctx);
 // output.version === ANALYSIS_SCHEMA_VERSION

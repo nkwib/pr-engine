@@ -1,18 +1,18 @@
 ---
-title: '@nkwib/pr-engine · API'
+title: '@prcompass/core · API'
 ---
 
 <svelte:head>
-  <title>@nkwib/pr-engine · API</title>
+  <title>@prcompass/core · API</title>
   <meta
     name="description"
-    content="Public surface of @nkwib/pr-engine — analyze, mineCommits, computeChurn, computeCochange, computeHotspots, computeRisk, parseCommitMetadata, parseCommitFiles."
+    content="Public surface of @prcompass/core — analyze, mineCommits, computeChurn, computeCochange, computeHotspots, computeRisk, parseCommitMetadata, parseCommitFiles."
   />
 </svelte:head>
 
 # API reference
 
-The package exposes a single top-level entry — there are no subpath imports. Modules are grouped by responsibility but everything ships from `'@nkwib/pr-engine'`.
+The package exposes a single top-level entry — there are no subpath imports. Modules are grouped by responsibility but everything ships from `'@prcompass/core'`.
 
 ## High-level
 
@@ -25,7 +25,7 @@ function analyze(ctx: AnalyzeContext): AnalysisOutput;
 Runs the full pipeline: `mineCommits → computeChurn → computeCochange → computeHotspots → computeRisk`. **Pure** — no I/O, no `Date.now()`, no `Math.random()`. Same input → same output, bit-for-bit.
 
 ```ts
-import { analyze, type AnalyzeContext, type AnalysisOutput } from '@nkwib/pr-engine';
+import { analyze, type AnalyzeContext, type AnalysisOutput } from '@prcompass/core';
 
 const output: AnalysisOutput = analyze(ctx);
 console.log(output.version);  // === ANALYSIS_SCHEMA_VERSION
@@ -207,7 +207,7 @@ import {
   type CommitRecord,
   type DiffFile,
   type DiffStatus
-} from '@nkwib/pr-engine';
+} from '@prcompass/core';
 ```
 
-There is **no** subpath namespace — everything ships from `'@nkwib/pr-engine'`. New behaviour arrives as new top-level exports, never as `@nkwib/pr-engine/something`.
+There is **no** subpath namespace — everything ships from `'@prcompass/core'`. New behaviour arrives as new top-level exports, never as `@prcompass/core/something`.

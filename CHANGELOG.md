@@ -2,6 +2,26 @@
 
 All notable changes to this package will be documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Pre-1.0 minor bumps may break compatibility; see VERSIONING.md.
 
+## [Unreleased]
+
+### Fixed
+
+- Docs site now references the published package names. Every `@nkwib/pr-engine` reference is `@prcompass/core` and `@nkwib/pr-analyze` is `@prcompass/cli`; the closed hosted-layer references previously written as `@nkwib/llm-client` / `@nkwib/db` are now neutral descriptions. The previously documented `npm install @nkwib/pr-engine` command was a 404.
+- Docs site landing badge corrected from `v0.1 · MIT` to `v0.2.0 · Apache-2.0`, and the footer LICENSE link is relabelled from `MIT` to `Apache-2.0`.
+- Benchmarks page no longer claims the numbers "reflect v0.1.0" as if current; it now states they were last recorded on v0.1.0 and have not been re-run.
+- Removed the reference to a non-existent "CLI smoke workflow" in `BENCHMARKS.md` (and the docs site benchmarks page).
+- `MineStats.bugFixRatio` JSDoc no longer contradicts itself; it accurately documents that the ratio is `0` for an empty commit list.
+- Reworded a garbled non-English comment leak in `tests/package-invariants.test.ts`.
+
+### Added
+
+- GitHub Actions CI (`.github/workflows/ci.yml`): typecheck, test, build, and a dist smoke step on Node 20, plus a docs-site build job (pnpm). Uses `npm install` because `package-lock.json` is intentionally gitignored.
+- `npm run smoke` script that asserts the built `dist/index.js` exposes the core public exports (`analyze`, `mineCommits`, `computeRisk`).
+
+### Other
+
+- `package.json` `repository.url` now uses the canonical `git+https://…` form.
+
 ## [0.2.0] — 2026-05-06
 
 ### Changed (BREAKING, pre-1.0)

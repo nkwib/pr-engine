@@ -1,9 +1,9 @@
 ---
-title: '@nkwib/pr-engine · Pipeline'
+title: '@prcompass/core · Pipeline'
 ---
 
 <svelte:head>
-  <title>@nkwib/pr-engine · Pipeline</title>
+  <title>@prcompass/core · Pipeline</title>
   <meta
     name="description"
     content="Walkthrough of the deterministic pipeline — mining → churn → cochange → hotspots → risk. What each engine computes, what it depends on."
@@ -94,7 +94,7 @@ The combiner weights hotspots, churn, and cochange centrality — the exact form
 ## End-to-end with `analyze()`
 
 ```ts
-import { analyze, type AnalyzeContext } from '@nkwib/pr-engine';
+import { analyze, type AnalyzeContext } from '@prcompass/core';
 
 const ctx: AnalyzeContext = await yourAdapter.collect();
 const output = analyze(ctx);

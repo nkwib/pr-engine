@@ -34,13 +34,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nkwib/pr-engine.git"
+    "url": "git+https://github.com/nkwib/pr-engine.git"
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "smoke": "node -e \"import('./dist/index.js').then(m => { for (const k of ['analyze', 'mineCommits', 'computeRisk']) { if (typeof m[k] !== 'function') { console.error('smoke: missing export ' + k); process.exit(1); } } console.log('smoke: dist exports OK'); })\"",
     "bench": "vitest bench --run"
   },
   "dependencies": {},
