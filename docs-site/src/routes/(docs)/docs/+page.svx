@@ -14,7 +14,7 @@ title: '@prcompass/core · Guide'
 
 `@prcompass/core` is the **deterministic engine** for PR Compass. It turns a list of git commits into per-file risk metrics. No network, no LLM, no database. Same input always produces the same output, bit-for-bit.
 
-This package backs the OSS release of the [PR Compass](https://prcompass.dev) hosted product. The hosted product is the closed-source layer above; this engine is what computes "which file looks risky" given the repository's commit history.
+This package backs the OSS release of the PR Compass hosted product. The hosted product is the closed-source layer above; this engine is what computes "which file looks risky" given the repository's commit history.
 
 ESM-only. Requires Node 20+.
 
