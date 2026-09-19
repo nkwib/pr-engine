@@ -2,7 +2,7 @@
 
 The deterministic engine for PR Compass: turns a list of git commits into per-file risk metrics. No network, no LLM, no database. Same input always produces the same output.
 
-This package backs the OSS release of the [PR Compass](https://prcompass.dev) hosted product. The hosted product is the closed-source layer above; this engine is what computes "which file looks risky" given the repository's commit history.
+This package backs the OSS release of the PR Compass hosted product. The hosted product is the closed-source layer above; this engine is what computes "which file looks risky" given the repository's commit history.
 
 ## Status
 

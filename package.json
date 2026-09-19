@@ -36,6 +36,7 @@
     "type": "git",
     "url": "git+https://github.com/nkwib/pr-engine.git"
   },
+  "homepage": "https://github.com/nkwib/pr-engine",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
