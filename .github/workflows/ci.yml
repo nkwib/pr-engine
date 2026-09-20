@@ -13,7 +13,7 @@ jobs:
     name: core (typecheck, test, build, smoke)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -44,7 +44,7 @@ jobs:
       run:
         working-directory: docs-site
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
